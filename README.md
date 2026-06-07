@@ -13,3 +13,4 @@ DeepAgents core understandings and developement of advanced ai agents. With memo
 6. ```uv add -r requirements.txt``` //migrate the requirements.
 7. ``` uv pip install -r requirements.txt``` //install the dependencies and required modules/lib.
  
+![Deep agent selection over langchain and langgraph or other frameworks/sdk](assets/image.png)
