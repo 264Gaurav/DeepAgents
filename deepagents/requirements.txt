@@ -9,3 +9,15 @@ tavily-python
 python-dotenv
 langchain_quickjs
 langchain-ollama
+
+# --- Core LangGraph Framework ---
+langgraph>=0.2.0
+
+# --- MongoDB Integration Packages ---
+langgraph-store-mongodb>=0.3.0
+langgraph-checkpoint-mongodb>=0.4.0
+pymongo>=4.0.0
+
+# --- PostgreSQL Integration Packages ---
+langgraph-checkpoint-postgres>=2.0.0
+psycopg[binary]>=3.0.0
