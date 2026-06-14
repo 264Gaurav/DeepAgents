@@ -22,3 +22,9 @@ DeepAgents core understandings and developement of advanced ai agents. With memo
 ## Deep agent Filesystem Tools - Backend
 
 ![Deep agent Filesystem Tools - Backend](assets/backend.png)
+
+---
+## Deep agent backend configured with postgres DB - 
+### For CompositeStore and StoreBackend : to maintain chat history and memory across different threads in persistence manner.
+
+![PG_DB](assets/pg_deep_agent.png)
