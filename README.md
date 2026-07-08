@@ -28,3 +28,12 @@ DeepAgents core understandings and developement of advanced ai agents. With memo
 ### For CompositeStore and StoreBackend : to maintain chat history and memory across different threads in persistence manner.
 
 ![PG_DB](assets/pg_deep_agent.png)
+
+
+## Deepagent Subagents:
+
+A deep agent can create subagents to delegate work. You can specify custom subagents in the subagents parameter. Subagents are useful for context quarantine (keeping the main agent’s context clean) and for providing specialized instructions.
+
+
+![Subagent](assets/subagents.png)
+
