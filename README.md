@@ -35,5 +35,5 @@ DeepAgents core understandings and developement of advanced ai agents. With memo
 A deep agent can create subagents to delegate work. You can specify custom subagents in the subagents parameter. Subagents are useful for context quarantine (keeping the main agent’s context clean) and for providing specialized instructions.
 
 
-![Subagent](assets/subagents.png)
+![Subagent](assets/subagent.png)
 
