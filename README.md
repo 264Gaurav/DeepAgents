@@ -29,7 +29,7 @@ DeepAgents core understandings and developement of advanced ai agents. With memo
 
 ![PG_DB](assets/pg_deep_agent.png)
 
-
+---- 
 ## Deepagent Subagents:
 
 A deep agent can create subagents to delegate work. You can specify custom subagents in the subagents parameter. Subagents are useful for context quarantine (keeping the main agent’s context clean) and for providing specialized instructions.
@@ -40,5 +40,15 @@ Subagents solve the context bloat problem. When agents use tools with large outp
 ### 1. Synchronous Subagent->
 ![Subagent](assets/subagent.png)
 
+### 2. Async Subagents ->
+- Async subagents let a supervisor agent launch background tasks that return immediately, so the supervisor can continue interacting with the user while subagents work concurrently. The supervisor can check progress, send follow-up instructions, or cancel tasks at any point.
 
+- Use async subagents when tasks are long-running, parallelizable, or need mid-flight steering.
+
+![Subagent](assets/async_subagent.png)
+
+---- 
+
+## When to Use Async Subagent vs Sync Agent / Subagent: 
+![Subagent](assets/usecase_subagent.png)
 
