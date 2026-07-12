@@ -50,5 +50,14 @@ Subagents solve the context bloat problem. When agents use tools with large outp
 ---- 
 
 ## When to Use Async Subagent vs Sync Agent / Subagent: 
-![Subagent](assets/usecase_subagent.png)
+![Async_Subagent](assets/usecase_subagent.png)
 
+- The AsyncSubAgentMiddleware which is included in the default middleware stack when async subagents are configured, gives the supervisor five tools:
+![tools](assets/async_subagent_tools.png)
+
+- The supervisor’s LLM calls these tools like any other tool. The middleware handles thread creation, run management, and state persistence automatically.
+
+### Understand the lifecycle of Async Subagent:
+![lifecycle](assets/lifecycle.png)
+
+---
