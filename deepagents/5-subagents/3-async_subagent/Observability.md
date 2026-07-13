@@ -2,205 +2,177 @@
 
 ## Overview
 
-Observability is essential when building production-grade AI agents. It helps you understand **what your agents are doing, why they made certain decisions, how long tasks take, and where failures occur**.
+Modern AI applications require observability at multiple levels.
 
-This project uses two complementary observability tools:
+This project uses two complementary platforms:
 
-* **LangSmith** – AI/LLM tracing, prompts, tool calls, and graph execution.
-* **Logfire** – Application logs, spans, timings, and exceptions.
+* **LangSmith** – LLM, Agent, LangChain and LangGraph tracing
+* **Logfire** – OpenTelemetry visualization, structured logs, spans, performance metrics and application monitoring
 
-> **Recommendation:** Use **both** together. LangSmith helps debug AI behavior, while Logfire helps monitor application performance and reliability.
+Together they provide complete visibility into your AI system.
 
 ---
 
-# Observability Architecture
+# Architecture
 
 ```text
-                        User
-                          │
-                          ▼
-                Supervisor Agent
-                          │
-             ┌────────────┴────────────┐
-             │                         │
-             ▼                         ▼
-      Async Researcher          Async Coder
-             │                         │
-             ▼                         ▼
-       LangSmith Trace          LangSmith Trace
-             │                         │
-             ▼                         ▼
-        Tool Calls                Tool Calls
-             │                         │
-             ▼                         ▼
-        Logfire Logs             Logfire Logs
-             │                         │
-             └──────────┬──────────────┘
-                        ▼
-               Observability Dashboard
+                    User
+                      │
+                      ▼
+              Supervisor Agent
+                      │
+        ┌─────────────┴─────────────┐
+        │                           │
+        ▼                           ▼
+ Async Researcher             Async Coder
+        │                           │
+        ▼                           ▼
+  Web Search Tool            Code Generation
+        │                           │
+        ▼                           ▼
+     LangGraph Nodes         LangGraph Nodes
+        │                           │
+        └─────────────┬─────────────┘
+                      │
+        LangSmith OpenTelemetry
+                      │
+               OpenTelemetry
+                      │
+              ┌───────┴────────┐
+              │                │
+              ▼                ▼
+         LangSmith         Logfire
 ```
 
 ---
 
-# Why Use Both?
+# Responsibilities
 
-| Feature              | LangSmith | Logfire |
-| -------------------- | --------- | ------- |
-| Prompt inspection    | ✅         | ❌       |
-| LLM responses        | ✅         | ❌       |
-| Tool execution       | ✅         | Partial |
-| Graph execution      | ✅         | ❌       |
-| Token usage          | ✅         | ❌       |
-| Structured logs      | ❌         | ✅       |
-| Exceptions           | Limited   | ✅       |
-| Performance metrics  | Partial   | ✅       |
-| Custom spans         | ❌         | ✅       |
-| Async task lifecycle | Partial   | ✅       |
+## LangSmith
 
----
+LangSmith is responsible for AI tracing.
 
-# LangSmith
-
-## What It Captures
+It automatically captures:
 
 * Prompt templates
 * User messages
-* LLM responses
-* Tool invocations
-* Graph execution
+* Chat history
+* Tool calls
+* Agent execution
+* LangGraph nodes
+* Async SubAgents
 * Token usage
 * Latency
+* LLM responses
 * Errors
-* Agent hierarchy
+
+LangSmith should be considered the primary debugging tool for AI workflows.
 
 ---
 
-## Installation
+## Logfire
 
-```bash
-pip install langsmith
-```
+Logfire is responsible for application observability.
 
----
+It captures:
 
-## Environment Variables
-
-Create a `.env` file.
-
-```env
-LANGSMITH_API_KEY=YOUR_API_KEY
-LANGSMITH_TRACING=true
-LANGSMITH_PROJECT=DeepAgents-Async
-```
-
-Load environment variables:
-
-```python
-from dotenv import load_dotenv
-load_dotenv()
-```
-
-No additional setup is required. LangChain and LangGraph automatically send traces when tracing is enabled.
-
----
-
-## What You'll See
-
-Example hierarchy:
-
-```text
-Supervisor
-
-│
-
-├── Launch Async Researcher
-
-│
-
-└── Return Immediately
-
-
-
-Researcher Graph
-
-│
-
-├── Prompt
-
-├── Tool
-
-├── LLM
-
-└── Response
-```
-
-Each AsyncSubAgent creates its own trace, making it easier to inspect independently.
-
----
-
-# Logfire
-
-## What It Captures
-
+* OpenTelemetry traces
 * Structured logs
-* Application spans
-* Execution timings
+* Custom spans
 * Exceptions
-* Custom events
-* Metadata
+* Performance timings
+* Request lifecycle
+* Async task lifecycle
 
-Logfire complements LangSmith by observing your application rather than the LLM.
-
----
-
-## Installation
-
-```bash
-pip install logfire
-```
+Logfire should be considered the primary monitoring tool.
 
 ---
 
-## Authentication
+# Why Both?
 
-Authenticate once:
+| Feature         | LangSmith | Logfire         |
+| --------------- | --------- | --------------- |
+| Prompt tracing  | ✅         | Through OTEL    |
+| Tool calls      | ✅         | Through OTEL    |
+| LangGraph nodes | ✅         | Through OTEL    |
+| Async SubAgents | ✅         | Through OTEL    |
+| Token usage     | ✅         | Span attributes |
+| Structured logs | ❌         | ✅               |
+| Exceptions      | Partial   | ✅               |
+| Performance     | Partial   | ✅               |
+| Custom spans    | ❌         | ✅               |
+
+---
+
+# Installation
 
 ```bash
-logfire auth
+pip install \
+deepagents \
+langgraph \
+langgraph-cli \
+langgraph-prebuilt \
+langsmith \
+"logsmith[otel]" \
+logfire
 ```
 
 or
 
 ```bash
-python -m logfire auth
+pip install -U deepagents langgraph langgraph-cli langgraph-prebuilt langsmith "langsmith[otel]" logfire
 ```
 
-Alternatively, configure a project write token.
+The OpenTelemetry integration requires the LangSmith package with OTEL support.
+
+---
+
+# Environment Variables
+
+Create a `.env` file.
 
 ```env
-LOGFIRE_TOKEN=YOUR_LOGFIRE_TOKEN
+LANGSMITH_API_KEY=xxxxxxxxxxxxxxxx
+
+LANGSMITH_PROJECT=DeepAgents-Async
+
+LANGSMITH_TRACING=true
+
+LANGSMITH_OTEL_ENABLED=true
+
+LANGSMITH_OTEL_ONLY=true
+
+LOGFIRE_TOKEN=xxxxxxxxxxxxxxxx
 ```
 
 ---
 
 # observability.py
 
-Create a shared module.
+The environment variables must be configured **before importing LangChain or LangGraph**, otherwise OpenTelemetry instrumentation will not be installed.
 
 ```python
+import os
 from dotenv import load_dotenv
-import logfire
 
 load_dotenv()
+
+os.environ["LANGSMITH_TRACING"] = "true"
+os.environ["LANGSMITH_OTEL_ENABLED"] = "true"
+os.environ["LANGSMITH_OTEL_ONLY"] = "true"
+
+import logfire
 
 logfire.configure(
     service_name="deepagents"
 )
 ```
 
-Import this module before creating any graph.
+---
 
-Example:
+# Important Import Order
+
+Correct:
 
 ```python
 import observability
@@ -208,23 +180,107 @@ import observability
 from langgraph.prebuilt import create_react_agent
 ```
 
+Wrong:
+
+```python
+from langgraph.prebuilt import create_react_agent
+
+import observability
+```
+
+Instrumentation happens during import.
+
 ---
 
-# Logging Information
+# Graph Structure
+
+```text
+Supervisor
+
+├── Researcher
+
+│      ├── Tavily
+
+│      └── LLM
+
+├── Coder
+
+│      └── LLM
+
+└── Web Search
+
+       └── Tavily
+```
+
+Every graph appears independently inside LangSmith.
+
+The corresponding OpenTelemetry spans are exported to Logfire.
+
+---
+
+# Current LangGraph Flow
+
+```
+User
+
+↓
+
+Supervisor
+
+↓
+
+Launch AsyncSubAgent
+
+↓
+
+Researcher
+
+↓
+
+Tool Call
+
+↓
+
+LLM
+
+↓
+
+Return Result
+```
+
+This entire execution becomes one trace with nested spans.
+
+---
+
+# Logfire
+
+Logfire version 4.x **does not** expose:
+
+```python
+logfire.instrument_langchain()
+```
+
+Do **not** use this API.
+
+LangChain and LangGraph tracing now rely on LangSmith's OpenTelemetry integration instead.
+
+---
+
+# Adding Application Logs
 
 ```python
 import logfire
 
 logfire.info(
-    "Launching async researcher",
+    "Launching async task",
     graph="researcher",
-    user="demo"
+    task_id=task_id
 )
 ```
 
 ---
 
-# Logging Errors
+# Recording Exceptions
 
 ```python
 try:
@@ -238,197 +294,161 @@ except Exception:
 # Custom Spans
 
 ```python
-with logfire.span("research_task"):
-    result = await graph.ainvoke(inputs)
-```
+import logfire
 
-Nested spans:
-
-```text
-research_task
-
-├── search
-
-├── summarize
-
-└── return
+with logfire.span("internet_search"):
+    result = internet_search(query)
 ```
 
 ---
 
-# Async Task Lifecycle
-
-Example:
-
-```python
-logfire.info(
-    "Task launched",
-    task_id=task_id
-)
-
-...
-
-logfire.info(
-    "Task completed",
-    task_id=task_id
-)
-```
-
----
-
-# Recommended Metadata
-
-Use consistent metadata across all graphs.
+# Async Task Monitoring
 
 ```python
 logfire.info(
     "Task started",
-    graph_id="researcher",
+    graph="researcher",
     thread_id=thread_id,
     task_id=task_id,
-    agent="researcher"
 )
 ```
 
-Useful identifiers:
+```python
+logfire.info(
+    "Task completed",
+    graph="researcher",
+    thread_id=thread_id,
+    task_id=task_id,
+)
+```
+
+---
+
+# Metadata
+
+Recommended metadata:
 
 * graph_id
 * thread_id
 * task_id
-* agent
 * user_id
 * session_id
+* request_id
+
+These greatly simplify filtering and correlation.
 
 ---
 
-# Recommended Project Structure
+# What Should Appear in LangSmith?
 
-```text
-project/
+```
+Supervisor
 
-observability.py
+├── Researcher
 
-model.py
+│      ├── Tool
 
-supervisor.py
-researcher.py
-coder.py
-web_search.py
+│      ├── Prompt
 
-langgraph.json
+│      ├── LLM
 
-README.md
-Observability_Readme.md
+│      └── Response
+
+├── Web Search
+
+│      └── Tavily
+
+└── Coder
+
+       └── LLM
 ```
 
 ---
 
-# Import Order
+# What Should Appear in Logfire?
 
-Always initialize observability before creating graphs.
-
-```python
-import observability
-
-from model import model
-
-from langgraph.prebuilt import create_react_agent
 ```
-
----
-
-# Best Practices
-
-* Initialize observability only once.
-* Use a shared `observability.py`.
-* Keep LangSmith enabled in development.
-* Use structured Logfire logs instead of `print()`.
-* Include metadata such as `thread_id`, `graph_id`, and `task_id`.
-* Create spans around long-running operations.
-* Log exceptions with `logfire.exception()`.
-
----
-
-# Current Logfire Note
-
-Recent versions of Logfire (v4.x and later) **do not provide** `logfire.instrument_langchain()`.
-
-If you're using Logfire 4.x:
-
-```python
-import logfire
-
-logfire.configure(
-    service_name="deepagents"
-)
-```
-
-is sufficient for initialization.
-
-For detailed LLM and LangGraph execution traces, rely on **LangSmith**.
-
----
-
-# End-to-End Flow
-
-```text
-User
-
-│
-
-▼
+Trace
 
 Supervisor
 
 │
 
-├────────────── LangSmith Trace
+├── Researcher
+
+│      ├── Tool
+
+│      ├── LLM
+
+│      └── Span
 
 │
 
-├────────────── Logfire Span
+├── Web Search
+
+│      └── Span
 
 │
 
-├────────────── Launch Async Researcher
+└── Coder
 
-│
-
-▼
-
-Researcher Graph
-
-│
-
-├────────────── LangSmith Trace
-
-│
-
-├────────────── Tool Execution
-
-│
-
-├────────────── LLM Response
-
-│
-
-└────────────── Logfire Events
-
-│
-
-▼
-
-Task Completed
+       └── Span
 ```
 
 ---
 
-# Summary
+# Troubleshooting
 
-| Component | Responsibility                                                         |
-| --------- | ---------------------------------------------------------------------- |
-| LangSmith | Prompt tracing, graph execution, tool calls, token usage, AI debugging |
-| Logfire   | Application logs, structured events, spans, timings, exceptions        |
-| Combined  | Complete observability for production-grade DeepAgents applications    |
+## No traces in LangSmith
 
-By combining LangSmith and Logfire, you gain visibility into both **AI decision-making** and **application behavior**, making it significantly easier to debug, monitor, and operate asynchronous multi-agent systems in development and production.
+Verify:
+
+* `LANGSMITH_API_KEY`
+* `LANGSMITH_TRACING=true`
+* Correct project name
+
+---
+
+## No traces in Logfire
+
+Check:
+
+* `LOGFIRE_TOKEN`
+* `logfire auth`
+* `logfire.configure()` is called exactly once
+* `observability.py` is imported before LangChain/LangGraph
+* `langsmith[otel]` is installed
+* `LANGSMITH_OTEL_ENABLED=true`
+* `LANGSMITH_OTEL_ONLY=true`
+
+Remember that Logfire visualizes OpenTelemetry spans; it does not instrument LangChain by itself in recent releases.
+
+---
+
+## `instrument_langchain()` Not Found
+
+Expected.
+
+Recent Logfire releases removed this API.
+
+Use the LangSmith OpenTelemetry integration instead.
+
+---
+
+# Best Practices
+
+* Configure observability once in a shared `observability.py`.
+* Import `observability` before any LangChain/LangGraph modules.
+* Use LangSmith for AI debugging.
+* Use Logfire for application monitoring and custom spans.
+* Add meaningful metadata (`graph_id`, `thread_id`, `task_id`) to logs and spans.
+* Wrap long-running or external operations (searches, database calls, APIs) in `logfire.span()` for additional visibility.
+
+---
+
+# References
+
+* LangSmith OpenTelemetry Guide
+* Logfire LangChain/LangGraph Integration
+* LangGraph Documentation
+* DeepAgents Documentation
