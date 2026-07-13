@@ -61,3 +61,29 @@ Subagents solve the context bloat problem. When agents use tools with large outp
 ![lifecycle](assets/lifecycle.png)
 
 ---
+### Understand the Lifecycle of an Async Subagent
+
+![Async Subagent Lifecycle](assets/lifecycle.png)
+
+---
+
+## Learn More with a Complete Hands-on Example
+
+For a detailed walkthrough of building and running Async Subagents with **DeepAgents** and **LangGraph**, see:
+
+📘 **[AsyncSubagent_Readme.md](./deepagents/5-subagents/3-async_subagent/Async_Subagent.md)**
+
+### What's Covered
+
+* 🚀 Introduction to Async Subagents
+* 🏗️ Architecture and execution flow
+* 📁 Recommended project structure
+* ⚙️ Step-by-step setup and installation
+* ▶️ Running the LangGraph runtime
+* 🤖 Integrating Ollama with DeepAgents
+* 🔗 Understanding `graph_id` and `langgraph.json`
+* 🧩 Creating and registering subagent graphs
+* 📨 Invoking the supervisor and launching background tasks
+* 🐞 Common errors and troubleshooting
+* ✅ Best practices for production-ready implementations
+* 🎯 End-to-end example from setup to execution

@@ -12,6 +12,8 @@ langchain-ollama
 
 # --- Core LangGraph Framework ---
 langgraph>=0.2.0
+langgraph-cli
+langgraph-cli[inmem]>=0.4.0
 
 # --- MongoDB Integration Packages ---
 langgraph-store-mongodb>=0.3.0
