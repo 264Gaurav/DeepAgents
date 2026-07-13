@@ -87,3 +87,12 @@ For a detailed walkthrough of building and running Async Subagents with **DeepAg
 * 🐞 Common errors and troubleshooting
 * ✅ Best practices for production-ready implementations
 * 🎯 End-to-end example from setup to execution
+
+
+----
+
+## Observability with Pydantic Logfire and Langsmith
+
+Observability/Tracing with **Langsmith** and **Logfire**, see:
+
+📘 **[Observability.md](./deepagents/5-subagents/3-async_subagent/Observability.md)**

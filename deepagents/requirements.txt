@@ -9,6 +9,8 @@ tavily-python
 python-dotenv
 langchain_quickjs
 langchain-ollama
+langsmith
+logfire
 
 # --- Core LangGraph Framework ---
 langgraph>=0.2.0
