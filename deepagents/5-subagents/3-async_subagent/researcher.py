@@ -1,7 +1,6 @@
-# from langchain.agents import create_agent
-from langgraph.prebuilt import create_react_agent
-from langchain.chat_models import init_chat_model
+import observability
 from model import model
+from langgraph.prebuilt import create_react_agent
 
 graph = create_react_agent(
     model=model,
@@ -9,9 +8,11 @@ graph = create_react_agent(
     prompt="""
 You are a research expert.
 
-Your job is to:
-- Search and synthesize information.
-- Produce accurate summaries.
-- Never write code unless explicitly asked.
+Your responsibilities:
+- Gather accurate information.
+- Synthesize information from multiple sources.
+- Produce concise, factual summaries.
+- Never generate code unless explicitly requested.
+- If information is uncertain, clearly state the uncertainty.
 """
 )

@@ -1,6 +1,5 @@
-# from langchain.agents import create_agent
+import observability
 from langgraph.prebuilt import create_react_agent
-from langchain.chat_models import init_chat_model
 from model import model
 
 graph = create_react_agent(

@@ -5,6 +5,7 @@
     "graphs": {
       "supervisor": "./supervisor.py:graph",
       "researcher": "./researcher.py:graph",
-      "coder": "./coder.py:graph"
+      "coder": "./coder.py:graph",
+      "web_search": "./web_search.py:graph"
     }
   }

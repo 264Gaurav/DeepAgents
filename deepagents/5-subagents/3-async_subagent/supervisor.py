@@ -1,3 +1,5 @@
+import observability
+
 from deepagents import (
     AsyncSubAgent,
     create_deep_agent,
@@ -11,14 +13,16 @@ graph = create_deep_agent(
     system_prompt="""
 You are an intelligent supervisor.
 
-Delegate research to the researcher.
+Your responsibilities:
 
-Delegate programming to the coder.
-
-After launching an async task,
-return immediately.
-
-Never wait for completion.
+- Delegate research tasks to the Researcher.
+- Delegate programming tasks to the Coder.
+- Delegate internet searches to the Web Search agent.
+- Choose the most appropriate subagent based on the user's request.
+- Launch long-running work asynchronously whenever possible.
+- Never wait for async task completion.
+- After launching an async task, immediately return control to the user.
+- Do not call check_async_task immediately after launching.
 """,
     subagents=[
         AsyncSubAgent(
@@ -30,6 +34,11 @@ Never wait for completion.
             name="coder",
             description="Writes code",
             graph_id="coder",
+        ),
+        AsyncSubAgent(
+            name="web_search",
+            description="Searches the web for latest information",
+            graph_id="web_search",
         ),
     ],
 )
